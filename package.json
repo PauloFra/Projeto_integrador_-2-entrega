@@ -1,0 +1,27 @@
+{
+  "name": "patas-conectadas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PoC do Projeto Integrador — plataforma de cuidado para pets (frontend React + API Node/Express + SQLite)",
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "start:backend": "npm run start --workspace backend",
+    "build": "npm run build --workspace frontend",
+    "preview": "npm run preview --workspace frontend",
+    "db:setup": "npm run db:setup --workspace backend",
+    "db:seed": "npm run db:seed --workspace backend",
+    "db:reset": "npm run db:reset --workspace backend",
+    "test": "npm run test --workspace backend"
+  }
+}
