@@ -1,0 +1,217 @@
+### =========================================================================
+### Patas Conectadas — requisições prontas para testar a API
+###
+### Como usar: instale a extensão "REST Client" no VS Code e clique em
+### "Send Request" acima de cada bloco. Comece pelo login para preencher
+### as variáveis de token.
+### =========================================================================
+
+@base = http://localhost:3333/api
+
+### Estado da API
+GET {{base}}/health
+
+### Catálogo de serviços
+GET {{base}}/servicos
+
+### ---------------------------------------------------------------- login
+### Tutora (jornada principal)
+# @name loginTutora
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "camila@patasconectadas.app", "senha": "patas123" }
+
+###
+@tutora = {{loginTutora.response.body.token}}
+
+### Prestador
+# @name loginPrestador
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "roberto@patasconectadas.app", "senha": "patas123" }
+
+###
+@prestador = {{loginPrestador.response.body.token}}
+
+### Clínica
+# @name loginClinica
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "clinica@patasconectadas.app", "senha": "patas123" }
+
+###
+@clinica = {{loginClinica.response.body.token}}
+
+### Perfil da sessão
+GET {{base}}/auth/eu
+Authorization: Bearer {{tutora}}
+
+### ------------------------------------------------------------ busca
+### Todos os passeadores (com distância a partir do endereço da tutora)
+GET {{base}}/prestadores?servico=passeio
+Authorization: Bearer {{tutora}}
+
+### Filtro: até 1 km
+GET {{base}}/prestadores?servico=passeio&raioKm=1
+Authorization: Bearer {{tutora}}
+
+### Filtro: nota mínima e menor preço primeiro
+GET {{base}}/prestadores?servico=passeio&notaMinima=4.9&ordenar=preco
+Authorization: Bearer {{tutora}}
+
+### Detalhe de um profissional (com avaliações recentes)
+GET {{base}}/prestadores/1
+Authorization: Bearer {{tutora}}
+
+### -------------------------------------------------------------- pets
+### Pets da tutora
+GET {{base}}/pets
+Authorization: Bearer {{tutora}}
+
+### Perfil completo da Luna (saúde + histórico + próximo cuidado)
+GET {{base}}/pets/1
+Authorization: Bearer {{tutora}}
+
+### Novo registro na carteira de saúde
+POST {{base}}/pets/1/saude
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{
+  "tipo": "vacina",
+  "nome": "Vacina da gripe canina",
+  "aplicadoEm": "2026-11-23T09:00:00",
+  "proximaDose": "2027-11-23T09:00:00"
+}
+
+### ------------------------------------------------------ agendamentos
+### Cuidados da tutora
+GET {{base}}/agendamentos
+Authorization: Bearer {{tutora}}
+
+### Criar um passeio de 60 min (valor calculado: R$ 70)
+# @name novoAgendamento
+POST {{base}}/agendamentos
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{
+  "petId": 1,
+  "prestadorId": 1,
+  "inicioEm": "2026-12-05T15:00:00",
+  "duracaoMinutos": 60,
+  "localEncontro": "Portaria do edifício",
+  "observacoes": "A Luna puxa um pouco no começo do passeio."
+}
+
+###
+@agendamento = {{novoAgendamento.response.body.id}}
+
+### Erro esperado (409): mesmo horário do agendamento acima
+POST {{base}}/agendamentos
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{ "petId": 1, "prestadorId": 1, "inicioEm": "2026-12-05T15:30:00", "duracaoMinutos": 30 }
+
+### Erro esperado (400): payload incompleto
+POST {{base}}/agendamentos
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{ "prestadorId": 1 }
+
+### Erro esperado (403): só o prestador confirma
+PATCH {{base}}/agendamentos/{{agendamento}}/status
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{ "status": "confirmado" }
+
+### Prestador confirma
+PATCH {{base}}/agendamentos/{{agendamento}}/status
+Authorization: Bearer {{prestador}}
+Content-Type: application/json
+
+{ "status": "confirmado" }
+
+### Prestador inicia
+PATCH {{base}}/agendamentos/{{agendamento}}/status
+Authorization: Bearer {{prestador}}
+Content-Type: application/json
+
+{ "status": "em_andamento" }
+
+### Prestador conclui
+PATCH {{base}}/agendamentos/{{agendamento}}/status
+Authorization: Bearer {{prestador}}
+Content-Type: application/json
+
+{ "status": "concluido" }
+
+### Tutora avalia (recalcula a média do profissional)
+POST {{base}}/agendamentos/{{agendamento}}/avaliacao
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{ "nota": 4, "comentario": "Mandou fotos do trajeto todo." }
+
+### ------------------------------------------------ área do prestador
+### Agenda e indicadores do mês
+GET {{base}}/prestador/agenda
+Authorization: Bearer {{prestador}}
+
+### Alternar disponibilidade
+PATCH {{base}}/prestadores/disponibilidade
+Authorization: Bearer {{prestador}}
+Content-Type: application/json
+
+{ "disponivelAgora": false }
+
+### ---------------------------------------------------------- mensagens
+### Conversas da tutora
+GET {{base}}/conversas
+Authorization: Bearer {{tutora}}
+
+### Mensagens de uma conversa (marca como lidas)
+GET {{base}}/conversas/1
+Authorization: Bearer {{prestador}}
+
+### Enviar mensagem
+POST {{base}}/conversas/1/mensagens
+Authorization: Bearer {{prestador}}
+Content-Type: application/json
+
+{ "conteudo": "Combinado! Levo a guia peitoral." }
+
+### ------------------------------------------------- painel da clínica
+### Indicadores da rede + documentação
+GET {{base}}/clinica/visao-geral
+Authorization: Bearer {{clinica}}
+
+### Revogar a verificação do Roberto (bloqueia novos agendamentos)
+PATCH {{base}}/clinica/profissionais/1/verificacao
+Authorization: Bearer {{clinica}}
+Content-Type: application/json
+
+{ "acao": "revogar" }
+
+### Erro esperado (409): profissional com verificação revogada
+POST {{base}}/agendamentos
+Authorization: Bearer {{tutora}}
+Content-Type: application/json
+
+{ "petId": 1, "prestadorId": 1, "inicioEm": "2026-12-08T10:00:00" }
+
+### Verificar de volta
+PATCH {{base}}/clinica/profissionais/1/verificacao
+Authorization: Bearer {{clinica}}
+Content-Type: application/json
+
+{ "acao": "verificar" }
+
+### Erro esperado (404): rota inexistente
+GET {{base}}/nao-existe
