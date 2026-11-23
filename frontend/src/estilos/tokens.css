@@ -1,0 +1,101 @@
+/* ===========================================================================
+   Design tokens — extraídos do protótipo validado na 1ª etapa do projeto.
+   A paleta é construída em oklch (verde-menta como cor institucional,
+   terracota e mel como apoios afetivos).
+   =========================================================================== */
+
+:root {
+  /* superfícies e texto */
+  --fundo: oklch(98.5% 0.003 160);
+  --fundo-alternativo: oklch(96% 0.006 160);
+  --cartao: oklch(100% 0 0);
+  --tinta: oklch(28% 0.035 163);
+  --tinta-suave: oklch(56% 0.018 165);
+  --borda: oklch(91.5% 0.01 161);
+  --borda-forte: oklch(85% 0.015 161);
+  --sobreposicao: oklch(20% 0.025 162 / 0.45);
+
+  /* cor institucional */
+  --principal: oklch(48% 0.105 166);
+  --principal-escuro: oklch(40% 0.1 166);
+  --principal-claro: oklch(94.8% 0.026 162);
+  --principal-contraste: oklch(100% 0 0);
+
+  /* apoios */
+  --terracota: oklch(63% 0.12 36);
+  --terracota-claro: oklch(96.5% 0.023 40);
+  --mel: oklch(77% 0.155 78);
+  --mel-claro: oklch(97.4% 0.037 88);
+  --alerta: oklch(59% 0.18 26);
+  --alerta-claro: oklch(96% 0.03 26);
+
+  /* tipografia */
+  --fonte-texto: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fonte-titulo: 'Manrope', var(--fonte-texto);
+
+  /* raios e sombras */
+  --raio-pequeno: 10px;
+  --raio: 16px;
+  --raio-grande: 24px;
+  --raio-pilula: 999px;
+  --sombra-suave: 0 4px 18px oklch(30% 0.03 160 / 0.05);
+  --sombra-media: 0 10px 30px oklch(30% 0.03 160 / 0.08);
+  --sombra-alta: 0 24px 60px oklch(30% 0.03 160 / 0.14);
+
+  /* espaçamento e medidas */
+  --largura-conteudo: 1120px;
+  --altura-cabecalho: 68px;
+  --altura-barra-inferior: 64px;
+
+  --transicao: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* O protótipo foi desenhado em tema claro; o modo escuro reaproveita os
+   mesmos tokens com luminosidade invertida para não quebrar a leitura. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema='claro']) {
+    --fundo: oklch(22% 0.02 163);
+    --fundo-alternativo: oklch(26% 0.022 163);
+    --cartao: oklch(27% 0.024 163);
+    --tinta: oklch(96% 0.01 160);
+    --tinta-suave: oklch(76% 0.015 163);
+    --borda: oklch(36% 0.025 163);
+    --borda-forte: oklch(45% 0.03 163);
+    --principal: oklch(72% 0.12 166);
+    --principal-escuro: oklch(80% 0.11 166);
+    --principal-claro: oklch(34% 0.045 165);
+    --principal-contraste: oklch(20% 0.03 165);
+    --terracota: oklch(75% 0.11 36);
+    --terracota-claro: oklch(33% 0.045 40);
+    --mel: oklch(82% 0.14 80);
+    --mel-claro: oklch(33% 0.05 85);
+    --alerta: oklch(70% 0.16 26);
+    --alerta-claro: oklch(32% 0.06 26);
+    --sombra-suave: 0 4px 18px oklch(0% 0 0 / 0.3);
+    --sombra-media: 0 10px 30px oklch(0% 0 0 / 0.35);
+    --sombra-alta: 0 24px 60px oklch(0% 0 0 / 0.45);
+  }
+}
+
+:root[data-tema='escuro'] {
+  --fundo: oklch(22% 0.02 163);
+  --fundo-alternativo: oklch(26% 0.022 163);
+  --cartao: oklch(27% 0.024 163);
+  --tinta: oklch(96% 0.01 160);
+  --tinta-suave: oklch(76% 0.015 163);
+  --borda: oklch(36% 0.025 163);
+  --borda-forte: oklch(45% 0.03 163);
+  --principal: oklch(72% 0.12 166);
+  --principal-escuro: oklch(80% 0.11 166);
+  --principal-claro: oklch(34% 0.045 165);
+  --principal-contraste: oklch(20% 0.03 165);
+  --terracota: oklch(75% 0.11 36);
+  --terracota-claro: oklch(33% 0.045 40);
+  --mel: oklch(82% 0.14 80);
+  --mel-claro: oklch(33% 0.05 85);
+  --alerta: oklch(70% 0.16 26);
+  --alerta-claro: oklch(32% 0.06 26);
+  --sombra-suave: 0 4px 18px oklch(0% 0 0 / 0.3);
+  --sombra-media: 0 10px 30px oklch(0% 0 0 / 0.35);
+  --sombra-alta: 0 24px 60px oklch(0% 0 0 / 0.45);
+}
